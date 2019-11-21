@@ -11,8 +11,19 @@ import UIKit
 public extension UIViewController {
   
   func setStatusBarStyle(_ style: UIStatusBarStyle) {
-    if let statusBar = UIApplication.shared.value(forKey: "statusBar") as? UIView {
-      statusBar.setValue(style == .lightContent ? UIColor.white : .black, forKey: "foregroundColor")
+    if #available(iOS 13.0, *) {
+        let statusBar =  UIView()
+        guard
+            let frame = UIApplication.shared.keyWindow?.windowScene?.statusBarManager?.statusBarFrame else {
+                return
+        }
+        statusBar.frame = frame
+        statusBar.tintColor = style == .lightContent ? .white : .black
+        UIApplication.shared.keyWindow?.addSubview(statusBar)
+    } else {
+        if let statusBar = UIApplication.shared.value(forKey: "statusBar") as? UIView {
+            statusBar.setValue(style == .lightContent ? UIColor.white : .black, forKey: "foregroundColor")
+        }
     }
   }
   
